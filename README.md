@@ -32,8 +32,8 @@ newgrp docker
 ### 2. Clone Repository
 
 ```bash
-git clone https://github.com/<your-username>/Apache-Cassandra-Security-RBAC-Encryption.git
-cd Apache-Cassandra-Security-RBAC-Encryption
+git clone https://github.com/<your-username>/06-Cassandra-RBAC-Encryption.git
+cd 06-Cassandra-RBAC-Encryption
 ```
 
 ### 3. Generate SSL Keystore
