@@ -1,60 +1,44 @@
-# Task 9: Apache Cassandra Security (RBAC + Encryption)
+Use this corrected README command style. Main fix: because SSL is forced, all `cqlsh` commands should use `--ssl`.
+
+````markdown
+# 🔐 Task 9: Apache Cassandra Security (RBAC + Encryption)
 
 ## Overview
 
-This project demonstrates how to implement **security in Apache Cassandra** using:
+This project demonstrates Apache Cassandra security using:
 
-* Authentication (Password-based)
-* RBAC (Role-Based Access Control)
-* Client-to-Node SSL Encryption
-* Docker Deployment
-
----
+- Authentication
+- RBAC (Role-Based Access Control)
+- Client-to-Node SSL Encryption
+- Docker Deployment
 
 ## Server Details
 
-```
-
-Public IP: Your Ip
-OS: Ubuntu (Azure VM)
-
+```text
+Public IP: 40.75.89.78
+OS: Ubuntu Azure VM
 ````
 
----
-
-## Tech Stack
-
-* Apache Cassandra 4.1
-* Docker & Docker Compose
-* OpenJDK 17
-* OpenSSL
-* cqlsh
-
----
-
-## Setup (Start to End)
+## Setup
 
 ### 1. Install Dependencies
 
 ```bash
 sudo apt update -y
-sudo apt install -y docker.io docker-compose-v2 openjdk-17-jdk openssl
+sudo apt install -y docker.io docker-compose-v2 openjdk-17-jdk openssl git
 sudo systemctl enable docker
 sudo systemctl start docker
 sudo usermod -aG docker azureuser
 newgrp docker
-````
-
----
+```
 
 ### 2. Clone Repository
 
 ```bash
-git clone https://github.com/your-username/cassandra-security-rbac-encryption-demo
+git clone https://github.com/shubhsalunke/Apache-Cassandra-Security-RBAC-Encryption.git
 cd Apache-Cassandra-Security-RBAC-Encryption
+mkdir -p certs
 ```
-
----
 
 ### 3. Generate SSL Keystore
 
@@ -70,8 +54,6 @@ keytool -genkeypair \
   -dname "CN=40.75.89.78, OU=DevOps, O=Demo, L=Pune, ST=MH, C=IN"
 ```
 
----
-
 ### 4. Start Cassandra
 
 ```bash
@@ -79,19 +61,33 @@ docker compose up -d --force-recreate
 sleep 40
 ```
 
----
+### 5. Export SSL Certificate
+
+```bash
+keytool -exportcert \
+  -alias cassandra \
+  -keystore certs/cassandra.keystore \
+  -storepass cassandra123 \
+  -rfc \
+  -file certs/cassandra.crt
+```
+
+```bash
+docker cp certs/cassandra.crt task9_cassandra_security:/certs/cassandra.crt
+```
 
 ## Database Setup
 
-### Login
+### Login With SSL
 
 ```bash
-docker exec -it task9_cassandra_security cqlsh -u cassandra -p cassandra
+docker exec -it \
+  -e SSL_CERTFILE=/certs/cassandra.crt \
+  task9_cassandra_security \
+  cqlsh --ssl -u cassandra -p cassandra
 ```
 
----
-
-### Create Keyspace & Table
+### Create Keyspace and Table
 
 ```sql
 CREATE KEYSPACE task9_demo
@@ -109,93 +105,57 @@ CREATE TABLE employees (
 INSERT INTO employees VALUES (1, 'Shubham', 'DevOps', 50000);
 ```
 
----
-
 ## RBAC Implementation
-
-### Create Roles
 
 ```sql
 CREATE ROLE readonly_user WITH PASSWORD='Read@123' AND LOGIN=true;
 CREATE ROLE writer_user WITH PASSWORD='Write@123' AND LOGIN=true;
-```
 
----
-
-### Grant Permissions
-
-```sql
 GRANT SELECT ON KEYSPACE task9_demo TO readonly_user;
 
 GRANT SELECT ON KEYSPACE task9_demo TO writer_user;
 GRANT MODIFY ON KEYSPACE task9_demo TO writer_user;
 ```
 
----
-
 ## Testing
 
 ### Readonly User
 
 ```bash
-docker exec -it task9_cassandra_security cqlsh -u readonly_user -p Read@123
+docker exec -it \
+  -e SSL_CERTFILE=/certs/cassandra.crt \
+  task9_cassandra_security \
+  cqlsh --ssl -u readonly_user -p 'Read@123'
 ```
 
 ```sql
-SELECT * FROM employees;   -- ✅ Works
+USE task9_demo;
+
+SELECT * FROM employees;
 
 INSERT INTO employees VALUES (2, 'Fail', 'IT', 40000);
--- ❌ Fails (No MODIFY permission)
 ```
 
----
+Expected: insert fails because readonly user has no MODIFY permission.
 
-### 🔹 Writer User
-
-```bash
-docker exec -it task9_cassandra_security cqlsh -u writer_user -p Write@123
-```
-
-```sql
-INSERT INTO employees VALUES (3, 'Writer Test', 'Backend', 70000);
--- ✅ Works
-```
-
----
-
-## SSL Encryption
-
-### Export Certificate
-
-```bash
-keytool -exportcert \
-  -alias cassandra \
-  -keystore certs/cassandra.keystore \
-  -storepass cassandra123 \
-  -rfc \
-  -file certs/cassandra.crt
-```
-
----
-
-### Copy to Container
-
-```bash
-docker cp certs/cassandra.crt task9_cassandra_security:/certs/cassandra.crt
-```
-
----
-
-### Test Secure Connection
+### Writer User
 
 ```bash
 docker exec -it \
   -e SSL_CERTFILE=/certs/cassandra.crt \
   task9_cassandra_security \
-  cqlsh --ssl -u cassandra -p cassandra
+  cqlsh --ssl -u writer_user -p 'Write@123'
 ```
 
----
+```sql
+USE task9_demo;
+
+INSERT INTO employees VALUES (3, 'Writer Test', 'Backend', 70000);
+
+SELECT * FROM employees;
+```
+
+Expected: insert works.
 
 ## Final Result
 
@@ -208,8 +168,9 @@ docker exec -it \
 | SSL Encryption       | ✅      |
 | Docker Setup         | ✅      |
 
----
-
 ## Conclusion
 
-Successfully implemented **Cassandra Security with RBAC and SSL Encryption** using Docker.
+Successfully implemented Cassandra Security with RBAC and SSL Encryption using Docker.
+
+```
+```
