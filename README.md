@@ -12,7 +12,7 @@ This project demonstrates Apache Cassandra security using:
 ## Server Details
 
 ```text
-Public IP: Your IP
+Public IP: 40.75.89.78
 OS: Ubuntu Azure VM
 ````
 
@@ -34,6 +34,7 @@ newgrp docker
 ```bash
 git clone https://github.com/shubhsalunke/Apache-Cassandra-Security-RBAC-Encryption.git
 cd Apache-Cassandra-Security-RBAC-Encryption
+mkdir -p certs
 ```
 
 ### 3. Generate SSL Keystore
@@ -86,12 +87,12 @@ docker exec -it \
 ### Create Keyspace and Table
 
 ```sql
-CREATE KEYSPACE task9_demo
+CREATE KEYSPACE IF NOT EXISTS task9_demo
 WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 1};
 
 USE task9_demo;
 
-CREATE TABLE employees (
+CREATE TABLE IF NOT EXISTS employees (
   id int PRIMARY KEY,
   name text,
   department text,
@@ -105,8 +106,8 @@ VALUES (1, 'Shubh', 'DevOps', 50000);
 ## RBAC Implementation
 
 ```sql
-CREATE ROLE readonly_user WITH PASSWORD='Read@123' AND LOGIN=true;
-CREATE ROLE writer_user WITH PASSWORD='Write@123' AND LOGIN=true;
+CREATE ROLE IF NOT EXISTS readonly_user WITH PASSWORD='Read@123' AND LOGIN=true;
+CREATE ROLE IF NOT EXISTS writer_user WITH PASSWORD='Write@123' AND LOGIN=true;
 
 GRANT SELECT ON KEYSPACE task9_demo TO readonly_user;
 
@@ -128,10 +129,10 @@ docker exec -it \
 ```sql
 USE task9_demo;
 
-INSERT INTO employees (id, name, department, salary)
-VALUES (3, 'Writer Test', 'Backend', 70000);
-
 SELECT * FROM employees;
+
+INSERT INTO employees (id, name, department, salary)
+VALUES (2, 'Fail', 'IT', 40000);
 ```
 
 Expected: insert fails because readonly user has no MODIFY permission.
@@ -148,7 +149,8 @@ docker exec -it \
 ```sql
 USE task9_demo;
 
-INSERT INTO employees VALUES (3, 'Writer Test', 'Backend', 70000);
+INSERT INTO employees (id, name, department, salary)
+VALUES (3, 'Writer Test', 'Backend', 70000);
 
 SELECT * FROM employees;
 ```
@@ -170,4 +172,5 @@ Expected: insert works.
 
 Successfully implemented Cassandra Security with RBAC and SSL Encryption using Docker.
 
+```
 ```
