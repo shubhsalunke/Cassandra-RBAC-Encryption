@@ -128,10 +128,10 @@ docker exec -it \
 ```sql
 USE task9_demo;
 
-SELECT * FROM employees;   -- ✅ works
-
 INSERT INTO employees (id, name, department, salary)
-VALUES (2, 'Fail', 'IT', 40000);   -- ❌ should fail (RBAC)
+VALUES (3, 'Writer Test', 'Backend', 70000);
+
+SELECT * FROM employees;
 ```
 
 Expected: insert fails because readonly user has no MODIFY permission.
