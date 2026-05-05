@@ -51,7 +51,7 @@ newgrp docker
 
 ```bash
 git clone https://github.com/your-username/cassandra-security-rbac-encryption-demo
-cd cassandra-security-rbac-encryption-demo
+cd Apache-Cassandra-Security-RBAC-Encryption
 ```
 
 ---
