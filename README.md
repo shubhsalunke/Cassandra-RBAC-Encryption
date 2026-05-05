@@ -112,6 +112,8 @@ GRANT SELECT ON KEYSPACE task9_demo TO readonly_user;
 
 GRANT SELECT ON KEYSPACE task9_demo TO writer_user;
 GRANT MODIFY ON KEYSPACE task9_demo TO writer_user;
+
+Exit;
 ```
 
 ## Testing
