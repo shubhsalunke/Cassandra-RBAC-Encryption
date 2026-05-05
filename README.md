@@ -1,7 +1,4 @@
-Use this corrected README command style. Main fix: because SSL is forced, all `cqlsh` commands should use `--ssl`.
-
-````markdown
-# 🔐 Task 9: Apache Cassandra Security (RBAC + Encryption)
+# Task 9: Apache Cassandra Security (RBAC + Encryption)
 
 ## Overview
 
@@ -172,5 +169,4 @@ Expected: insert works.
 
 Successfully implemented Cassandra Security with RBAC and SSL Encryption using Docker.
 
-```
 ```
