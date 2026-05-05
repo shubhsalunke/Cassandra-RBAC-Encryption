@@ -12,7 +12,7 @@ This project demonstrates Apache Cassandra security using:
 ## Server Details
 
 ```text
-Public IP: 40.75.89.78
+Public IP: Your IP
 OS: Ubuntu Azure VM
 ````
 
