@@ -99,7 +99,8 @@ CREATE TABLE employees (
   salary int
 );
 
-INSERT INTO employees VALUES (1, 'Shubham', 'DevOps', 50000);
+INSERT INTO employees (id, name, department, salary)
+VALUES (1, 'Shubh', 'DevOps', 50000);
 ```
 
 ## RBAC Implementation
