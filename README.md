@@ -32,7 +32,7 @@ newgrp docker
 ### 2. Clone Repository
 
 ```bash
-git clone https://github.com/shubhsalunke/Apache-Cassandra-Security-RBAC-Encryption.git
+git clone https://github.com/<your-username>/Apache-Cassandra-Security-RBAC-Encryption.git
 cd Apache-Cassandra-Security-RBAC-Encryption
 ```
 
