@@ -134,6 +134,8 @@ SELECT * FROM employees;
 
 INSERT INTO employees (id, name, department, salary)
 VALUES (2, 'Fail', 'IT', 40000);
+
+Exit;
 ```
 
 Expected: insert fails because readonly user has no MODIFY permission.
@@ -154,6 +156,8 @@ INSERT INTO employees (id, name, department, salary)
 VALUES (3, 'Writer Test', 'Backend', 70000);
 
 SELECT * FROM employees;
+
+Exit; 
 ```
 
 Expected: insert works.
