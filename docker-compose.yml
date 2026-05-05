@@ -1,0 +1,27 @@
+services:
+  cassandra:
+    image: cassandra:4.1
+    container_name: task9_cassandra_security
+    restart: unless-stopped
+    ports:
+      - "9042:9042"
+    volumes:
+      - cassandra_data:/var/lib/cassandra
+      - ./certs:/certs
+
+    command: >
+      bash -c "
+      sed -i 's/authenticator: AllowAllAuthenticator/authenticator: PasswordAuthenticator/' /etc/cassandra/cassandra.yaml &&
+      sed -i 's/authorizer: AllowAllAuthorizer/authorizer: CassandraAuthorizer/' /etc/cassandra/cassandra.yaml &&
+
+      sed -i '/client_encryption_options:/,/^[a-z_]/ s/enabled: false/enabled: true/' /etc/cassandra/cassandra.yaml &&
+      sed -i '/client_encryption_options:/,/^[a-z_]/ s/# optional: true/optional: false/' /etc/cassandra/cassandra.yaml &&
+      sed -i '/client_encryption_options:/,/^[a-z_]/ s/optional: true/optional: false/' /etc/cassandra/cassandra.yaml &&
+      sed -i '/client_encryption_options:/,/^[a-z_]/ s#keystore: conf/.keystore#keystore: /certs/cassandra.keystore#' /etc/cassandra/cassandra.yaml &&
+      sed -i '/client_encryption_options:/,/^[a-z_]/ s#keystore_password: .*#keystore_password: cassandra123#' /etc/cassandra/cassandra.yaml &&
+
+      cassandra -R -f
+      "
+
+volumes:
+  cassandra_data:
