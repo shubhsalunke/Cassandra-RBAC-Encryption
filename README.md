@@ -176,6 +176,3 @@ Expected: insert works.
 ## Conclusion
 
 Successfully implemented Cassandra Security with RBAC and SSL Encryption using Docker.
-
-```
-```
