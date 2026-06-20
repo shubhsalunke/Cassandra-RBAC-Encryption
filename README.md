@@ -1,4 +1,4 @@
-# Task 9: Apache Cassandra Security (RBAC + Encryption)
+# Apache Cassandra Security (RBAC + Encryption)
 
 ## Overview
 
